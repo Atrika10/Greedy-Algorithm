@@ -1,32 +1,40 @@
 import java.util.*;
 public class FractionalKnapSack {
 
+    // Time complexity will be O(nlogn)
     public static void main(String[] args) {
         int weight[] = {10,20,30};
         int value[] = {60,100,120}; 
         int w = 50;
 
-        // ratio calculate, as I want max value & min weight
-        int ratio[] = new int[value.length];
-        for (int i = 0; i < value.length; i++) {
-            ratio[i] = value[i]/weight[i];
+        //  calculate ratio
+        double ratio[][] = new double[value.length][2];
+        // 0th col => idx; 1st col => ratio
+        for (int i = 0; i < ratio.length; i++) {
+            ratio[i][0] = i;
+            ratio[i][1] = value[i]/(double)weight[i];
         }
 
+        Arrays.sort(ratio, Comparator.comparingDouble(o -> o[1]));  // it will give me sorted array in accending order
+
         int capacity = w;
-        int maxValue =0;
-        for (int i = 0; i < ratio.length; i++) {
-            if (capacity >= weight[i]) {
-                // I can include total item
-                capacity -= weight[i];         // means I've added this item
-                maxValue += value[i];
+        int finalValue =0;
+        for (int i = ratio.length-1; i >= 0; i--) {
+            int idx = (int)ratio[i][0];
+
+            if (capacity >= weight[idx]) {
+                // include total weight
+                finalValue += value[idx];
+                capacity -= weight[idx];
             }else{
-                // I've less capacity of current item's weight
-                maxValue += ratio[i]*capacity;
+                // include fractional weight
+                finalValue += (ratio[i][1]*capacity);
                 capacity =0;
                 break;
             }
+            
         }
-        System.out.println( " max value I can add: " + maxValue);
+        System.out.println( " final value I can add: " + finalValue);
     }
     
 }
